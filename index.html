@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GameZone Mobile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff6b00;
+            --secondary: #333;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+            height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+            position: fixed;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            max-width: 100vw;
+            max-height: 100vh;
+            position: relative;
+        }
+        
+        .header {
+            background-color: var(--secondary);
+            color: white;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-icon {
+            color: white;
+            font-size: 1.2rem;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        .search-container {
+            padding: 10px 15px;
+            background-color: var(--secondary);
+        }
+        
+        .search-bar {
+            display: flex;
+            width: 100%;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px 0 0 20px;
+            font-size: 0.9rem;
+        }
+        
+        .search-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 0 20px 20px 0;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 60px;
+        }
+        
+        .region-selector {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background-color: white;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .currency-toggle {
+            display: flex;
+            background-color: #f0f0f0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .currency-option {
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .currency-option.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .category-tabs {
+            display: flex;
+            background-color: white;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .category-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .category-tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        
+        .product-image {
+            height: 0;
+            padding-bottom: 100%;
+            position: relative;
+            background-color: #f0f0f0;
+        }
+        
+        .product-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 15px;
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .product-info {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-title {
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.8em;
+            line-height: 1.4;
+        }
+        
+        .product-price {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        
+        .product-price .original {
+            color: #999;
+            text-decoration: line-through;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+        
+        .add-to-cart {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            height: 100%;
+            background-color: white;
+            z-index: 200;
+            transition: right 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cart-sidebar.open {
+            right: 0;
+        }
+        
+        .cart-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-cart {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .cart-item {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            background-color: #f5f5f5;
+            margin-right: 10px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .cart-item-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+        }
+        
+        .cart-item-title {
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+        
+        .cart-item-price {
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+        
+        .cart-item-remove {
+            color: #ff0000;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .cart-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .product-detail-page {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 150;
+            overflow-y: auto;
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+        
+        .product-detail-image {
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .product-detail-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .product-detail-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .product-detail-price {
+            font-size: 1.4rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .product-detail-description {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .reviews-section {
+            margin-top: 20px;
+        }
+        
+        .review {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        
+        .review-author {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .review-text {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #555;
+        }
+        
+        .product-detail-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .buy-now-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .add-to-cart-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 300;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            width: 85%;
+            max-width: 400px;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-title {
+            margin-bottom: 15px;
+            text-align: center;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .games-page {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 150;
+            overflow-y: auto;
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .game-card {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            height: 150px;
+            cursor: pointer;
+        }
+        
+        .game-image {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.3s;
+        }
+        
+        .game-card:hover .game-image {
+            transform: scale(1.05);
+        }
+        
+        .game-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+        }
+        
+        .game-screen {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 200;
+            overflow-y: auto;
+        }
+        
+        .game-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .tic-tac-toe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            background-color: #333;
+        }
+        
+        .tic-tac-toe-cell {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+        }
+        
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background-color: var(--primary);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+            background-color: white;
+            color: var(--primary);
+        }
+        
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        
+        .celebration h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: gold;
+        }
+        
+        .celebration p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: confetti-fall 3s linear forwards;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .search-page {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 150;
+            overflow-y: auto;
+        }
+        
+        .account-page {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 150;
+            overflow-y: auto;
+        }
+        
+        .account-form {
+            margin-top: 20px;
+        }
+        
+        .account-form .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .account-actions {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">GameZone</div>
+            <div class="header-icons">
+                <div class="header-icon" id="user-btn">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="header-icon" id="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search games...">
+                <button class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+        
+        <!-- Main Content - Product Grid -->
+        <div class="main-content" id="main-content">
+            <!-- Region Selector -->
+            <div class="region-selector">
+                <select style="padding: 5px 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 0.8rem;">
+                    <option>United States</option>
+                    <option>Pakistan</option>
+                    <option>UK</option>
+                    <option>Canada</option>
+                </select>
+                <div class="currency-toggle">
+                    <div class="currency-option active" data-currency="usd">USD</div>
+                    <div class="currency-option" data-currency="pkr">PKR</div>
+                </div>
+            </div>
+            
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <div class="category-tab active" data-category="consoles">Consoles</div>
+                <div class="category-tab" data-category="accessories">Accessories</div>
+            </div>
+            
+            <!-- Product Grid -->
+            <div class="product-grid" id="product-grid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Product Detail Page -->
+        <div class="product-detail-page" id="product-detail-page">
+            <button class="back-button" id="back-button"><i class="fas fa-arrow-left"></i></button>
+            <div class="product-detail-image">
+                <img id="detail-product-image" src="" alt="">
+            </div>
+            <h1 class="product-detail-title" id="detail-product-title"></h1>
+            <div class="product-detail-price" id="detail-product-price"></div>
+            <div class="product-detail-description" id="detail-product-description"></div>
+            
+            <div class="reviews-section">
+                <h3>Customer Reviews</h3>
+                <div id="product-reviews">
+                    <!-- Reviews will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="product-detail-actions">
+                <button class="add-to-cart-btn" id="detail-add-to-cart">Add to Cart</button>
+                <button class="buy-now-btn" id="detail-buy-now">Buy Now</button>
+            </div>
+        </div>
+        
+        <!-- Games Page -->
+        <div class="games-page" id="games-page">
+            <button class="back-button" id="games-back-button"><i class="fas fa-arrow-left"></i></button>
+            <h1>Mini Games</h1>
+            <p>Play these fun mini games and win discounts!</p>
+            
+            <div class="game-grid">
+                <div class="game-card" id="tic-tac-toe-game">
+                    <div class="game-image" style="background-image: url('https://images.unsplash.com/photo-1605170439002-90845e8c0137?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                        <div class="game-title">Tic Tac Toe</div>
+                    </div>
+                </div>
+                <div class="game-card" id="memory-game">
+                    <div class="game-image" style="background-image: url('https://images.unsplash.com/photo-1592198084033-aade902d1aae?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                        <div class="game-title">Memory Game</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tic Tac Toe Game Screen -->
+        <div class="game-screen" id="tic-tac-toe-screen">
+            <button class="back-button" id="tic-tac-toe-back-button"><i class="fas fa-arrow-left"></i></button>
+            <h1>Tic Tac Toe</h1>
+            <p>Get 3 in a row to win!</p>
+            
+            <div class="game-container">
+                <div class="tic-tac-toe-board" id="tic-tac-toe-board">
+                    <!-- Cells will be added by JavaScript -->
+                </div>
+                <div id="tic-tac-toe-status">Player X's turn</div>
+            </div>
+        </div>
+        
+        <!-- Memory Game Screen -->
+        <div class="game-screen" id="memory-game-screen">
+            <button class="back-button" id="memory-game-back-button"><i class="fas fa-arrow-left"></i></button>
+            <h1>Memory Game</h1>
+            <p>Find all matching pairs to win!</p>
+            
+            <div class="game-container">
+                <div class="memory-game" id="memory-game-board">
+                    <!-- Cards will be added by JavaScript -->
+                </div>
+                <div id="memory-game-status">Moves: 0</div>
+            </div>
+        </div>
+        
+        <!-- Search Page -->
+        <div class="search-page" id="search-page">
+            <button class="back-button" id="search-back-button"><i class="fas fa-arrow-left"></i></button>
+            <h1>Search</h1>
+            <div class="search-bar" style="margin: 20px 0;">
+                <input type="text" id="search-page-input" placeholder="Search games..." style="flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px;">
+                <button class="search-btn" id="search-page-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div id="search-results">
+                <!-- Search results will appear here -->
+            </div>
+        </div>
+        
+        <!-- Account Page -->
+        <div class="account-page" id="account-page">
+            <button class="back-button" id="account-back-button"><i class="fas fa-arrow-left"></i></button>
+            <h1>Account</h1>
+            
+            <div class="account-form">
+                <div class="form-group">
+                    <label for="account-email">Email</label>
+                    <input type="email" id="account-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="account-password">Password</label>
+                    <input type="password" id="account-password" placeholder="Enter your password">
+                </div>
+                
+                <div class="account-actions">
+                    <button class="submit-btn" id="login-btn">Login</button>
+                    <button class="submit-btn" style="background-color: white; color: var(--primary); border: 1px solid var(--primary); margin-top: 10px;" id="signup-btn">Sign Up</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item" id="home-nav">
+                <div class="nav-icon"><i class="fas fa-home"></i></div>
+                <div>Home</div>
+            </div>
+            <div class="nav-item" id="games-nav">
+                <div class="nav-icon"><i class="fas fa-gamepad"></i></div>
+                <div>Games</div>
+            </div>
+            <div class="nav-item" id="search-nav">
+                <div class="nav-icon"><i class="fas fa-search"></i></div>
+                <div>Search</div>
+            </div>
+            <div class="nav-item" id="account-nav">
+                <div class="nav-icon"><i class="fas fa-user"></i></div>
+                <div>Account</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <div class="close-cart" id="close-cart">&times;</div>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Cart items will be loaded here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="checkout-btn">Checkout</button>
+        </div>
+    </div>
+    
+    <!-- Sign Up Modal -->
+    <div class="modal-overlay" id="signup-modal">
+        <div class="modal-content">
+            <div class="close-modal" id="close-modal">&times;</div>
+            <h2 class="modal-title">Create Account</h2>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Celebration Modal -->
+    <div class="celebration" id="celebration">
+        <h1>Congratulations!</h1>
+        <p>You won the game!</p>
+        <p>Here's your $20 discount code: <strong>GAMEZONE20</strong></p>
+        <button class="submit-btn" id="close-celebration">Claim Reward</button>
+    </div>
+
+    <script>
+        // Enhanced product data with working image URLs
+        const products = {
+            consoles: [
+                {
+                    id: 1,
+                    title: "PlayStation 5 Console",
+                    price: 499.99,
+                    originalPrice: 549.99,
+                    image: "https://www.shutterstock.com/image-photo/new-playstation-5-slim-model-260nw-2377124501.jpg",
+                    badge: "Bestseller",
+                    description: "Experience lightning-fast loading with an ultra-high speed SSD, deeper immersion with support for haptic feedback, adaptive triggers and 3D Audio.",
+                    reviews: [
+                        {
+                            author: "Alex Johnson",
+                            rating: 5,
+                            text: "The PS5 is a game changer! The graphics are incredible and the load times are so fast compared to my old PS4."
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "Xbox Series X",
+                    price: 499.99,
+                    originalPrice: 499.99,
+                    image: "https://cdn.mos.cms.futurecdn.net/73sXr4f93ux2KTVhFjWJFV.jpg",
+                    description: "The fastest, most powerful Xbox ever with 12 teraflops of processing power and compatibility with thousands of games.",
+                    reviews: [
+                        {
+                            author: "Taylor Smith",
+                            rating: 5,
+                            text: "Game Pass makes this console unbeatable. So many great games available from day one."
+                        }
+                    ]
+                },
+                {
+                    id: 3,
+                    title: "Nintendo Switch OLED",
+                    price: 349.99,
+                    originalPrice: 349.99,
+                    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTARxxITe36g9uddaakZaxm0xhKZWoRSOsQLg&s",
+                    badge: "New",
+                    description: "7-inch OLED screen with vibrant colors and crisp contrast. Enjoy enhanced audio from the system's onboard speakers.",
+                    reviews: [
+                        {
+                            author: "Casey Kim",
+                            rating: 5,
+                            text: "The OLED screen makes such a difference - colors pop and the blacks are so deep."
+                        }
+                    ]
+                },
+                {
+                    id: 4,
+                    title: "PlayStation 5 Digital Edition",
+                    price: 399.99,
+                    originalPrice: 399.99,
+                    image: "https://www.shutterstock.com/image-vector/tokyo-2021-sony-play-station-260nw-2085889891.jpg ",
+                    description: "Same lightning-fast performance as the PS5 console, but without a disc drive.",
+                    reviews: [
+                        {
+                            author: "Morgan Taylor",
+                            rating: 4,
+                            text: "Great console if you're all-digital like me. Saves space and money."
+                        }
+                    ]
+                },
+                {
+                    id: 5,
+                    title: "Xbox Series S",
+                    price: 299.99,
+                    originalPrice: 299.99,
+                    image: "https://cdn.mos.cms.futurecdn.net/NScEyK3ci3xviN7uC3rZyf-1200-80.jpg",
+                    badge: "Deal",
+                    description: "Smallest, sleekest Xbox ever. Experience next-gen speed and performance.",
+                    reviews: [
+                        {
+                            author: "Riley Chen",
+                            rating: 4,
+                            text: "Incredible value for money. Plays all the same games as the Series X."
+                        }
+                    ]
+                }
+            ],
+            accessories: [
+                {
+                    id: 6,
+                    title: "DualSense Wireless Controller",
+                    price: 69.99,
+                    originalPrice: 74.99,
+                    image: "https://media.hifi.lu/sys-master/products/9405699129374/3840x3840.B1200001_1.webp",
+                    badge: "Bestseller",
+                    description: "Discover a deeper gaming experience with the innovative PS5 controller.",
+                    reviews: [
+                        {
+                            author: "Jordan Lee",
+                            rating: 5,
+                            text: "The haptic feedback is incredible - you can feel different surfaces!"
+                        }
+                    ]
+                },
+                {
+                    id: 7,
+                    title: "Xbox Wireless Controller",
+                    price: 59.99,
+                    originalPrice: 59.99,
+                    image: "https://assets.xboxservices.com/assets/31/58/31580571-d688-4255-92bb-80d89ebee0c6.jpg?n=111101_Gallery-0_10_1350x759.jpg",
+            description: "Experience the modernized design of the Xbox Wireless Controller, featuring sculpted surfaces and refined geometry for enhanced comfort",
+                    description: "Modernized design featuring sculpted surfaces for enhanced comfort.",
+                    reviews: [
+                        {
+                            author: "Alex Morgan",
+                            rating: 5,
+                            text: "The textured grip makes this the most comfortable controller."
+                        }
+                    ]
+                },
+                {
+                    id: 8,
+                    title: "Nintendo Pro Controller",
+                    price: 69.99,
+                    originalPrice: 69.99,
+                    image: "https://i5.walmartimages.com/asr/8f04637a-00b2-44fc-82d2-7d14f2b16a90.19bda5bf40a53503e000a2832a4ca1b9.jpeg",
+                    description: "Take your game sessions up a notch with motion controls and HD rumble.",
+                    reviews: [
+                        {
+                            author: "Taylor Swift",
+                            rating: 4,
+                            text: "Perfect for playing Zelda. Much better than the Joy-Cons."
+                        }
+                    ]
+                },
+                {
+                    id: 9,
+                    title: "PlayStation VR2",
+                    price: 549.99,
+                    originalPrice: 549.99,
+                    image: "https://m.media-amazon.com/images/I/61tE7IcuLmL._SL1500_.jpg",
+                    badge: "New",
+                    description: "Next-generation virtual reality gaming with 4K HDR visuals.",
+                    reviews: [
+                        {
+                            author: "VR Enthusiast",
+                            rating: 5,
+                            text: "The resolution is so much better than the original PSVR."
+                        }
+                    ]
+                },
+                {
+                    id: 10,
+                    title: "Gaming Headset",
+                    price: 89.99,
+                    originalPrice: 99.99,
+                    image: "https://m.media-amazon.com/images/I/61CGHv6kmWL._SL1500_.jpg",
+                    badge: "Deal",
+                    description: "Premium gaming headset with 7.1 surround sound and noise-cancelling mic.",
+                    reviews: [
+                        {
+                            author: "GamerPro",
+                            rating: 4,
+                            text: "Great sound quality and very comfortable for long sessions."
+                        }
+                    ]
+                }
+            ]
+        };
+        
+        // App state
+        let currentCategory = 'consoles';
+        let currentCurrency = 'usd';
+        let cart = [];
+        const exchangeRate = 285; // USD to PKR
+        let currentProductId = null;
+        
+        // Game states
+        let ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let memoryCards = [];
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let moveCount = 0;
+        let matchedPairs = 0;
+
+        // DOM elements
+        const productGrid = document.getElementById('product-grid');
+        const mainContent = document.getElementById('main-content');
+        const productDetailPage = document.getElementById('product-detail-page');
+        const backButton = document.getElementById('back-button');
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const currencyOptions = document.querySelectorAll('.currency-option');
+        const cartBtn = document.getElementById('cart-btn');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const closeCartBtn = document.getElementById('close-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        const cartCountElement = document.querySelector('.cart-count');
+        const userBtn = document.getElementById('user-btn');
+        const signupModal = document.getElementById('signup-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const detailAddToCartBtn = document.getElementById('detail-add-to-cart');
+        const detailBuyNowBtn = document.getElementById('detail-buy-now');
+        
+        // New page elements
+        const gamesPage = document.getElementById('games-page');
+        const gamesBackButton = document.getElementById('games-back-button');
+        const ticTacToeGameBtn = document.getElementById('tic-tac-toe-game');
+        const memoryGameBtn = document.getElementById('memory-game');
+        const ticTacToeScreen = document.getElementById('tic-tac-toe-screen');
+        const ticTacToeBackButton = document.getElementById('tic-tac-toe-back-button');
+        const ticTacToeBoardElement = document.getElementById('tic-tac-toe-board');
+        const ticTacToeStatus = document.getElementById('tic-tac-toe-status');
+        const memoryGameScreen = document.getElementById('memory-game-screen');
+        const memoryGameBackButton = document.getElementById('memory-game-back-button');
+        const memoryGameBoard = document.getElementById('memory-game-board');
+        const memoryGameStatus = document.getElementById('memory-game-status');
+        const searchPage = document.getElementById('search-page');
+        const searchBackButton = document.getElementById('search-back-button');
+        const searchInput = document.getElementById('search-input');
+        const searchPageInput = document.getElementById('search-page-input');
+        const searchPageBtn = document.getElementById('search-page-btn');
+        const searchResults = document.getElementById('search-results');
+        const accountPage = document.getElementById('account-page');
+        const accountBackButton = document.getElementById('account-back-button');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        
+        // Navigation elements
+        const homeNav = document.getElementById('home-nav');
+        const gamesNav = document.getElementById('games-nav');
+        const searchNav = document.getElementById('search-nav');
+        const accountNav = document.getElementById('account-nav');
+        
+        // Celebration elements
+        const celebration = document.getElementById('celebration');
+        const closeCelebration = document.getElementById('close-celebration');
+
+        // Initialize the app
+        function init() {
+            renderProducts();
+            setupEventListeners();
+            setupTicTacToe();
+            setupMemoryGame();
+        }
+
+        // Render products
+        function renderProducts() {
+            productGrid.innerHTML = '';
+            
+            const categoryProducts = products[currentCategory];
+            
+            categoryProducts.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product-card';
+                productElement.setAttribute('data-id', product.id);
+                
+                let priceHTML = '';
+                if (currentCurrency === 'usd') {
+                    priceHTML = `$${product.price.toFixed(2)}`;
+                    if (product.originalPrice && product.originalPrice > product.price) {
+                        priceHTML += ` <span class="original">$${product.originalPrice.toFixed(2)}</span>`;
+                    }
+                } else {
+                    const pricePKR = product.price * exchangeRate;
+                    const originalPKR = product.originalPrice * exchangeRate;
+                    priceHTML = `PKR ${pricePKR.toFixed(0)}`;
+                    if (product.originalPrice && product.originalPrice > product.price) {
+                        priceHTML += ` <span class="original">PKR ${originalPKR.toFixed(0)}</span>`;
+                    }
+                }
+                
+                let badgeHTML = '';
+                if (product.badge) {
+                    badgeHTML = `<div class="product-badge">${product.badge}</div>`;
+                }
+                
+                productElement.innerHTML = `
+                    <div class="product-image">
+                        ${badgeHTML}
+                        <img src="${product.image}" alt="${product.title}" onerror="this.src='https://via.placeholder.com/300?text=Product+Image'">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">${product.title}</div>
+                        <div class="product-price">${priceHTML}</div>
+                        <button class="add-to-cart" data-id="${product.id}">Add to Cart</button>
+                    </div>
+                `;
+                
+                productGrid.appendChild(productElement);
+            });
+            
+            // Add event listeners to product cards and buttons
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('add-to-cart')) {
+                        const productId = parseInt(card.getAttribute('data-id'));
+                        showProductDetail(productId);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    addToCart(e);
+                });
+            });
+        }
+
+        // Show product detail page
+        function showProductDetail(productId) {
+            currentProductId = productId;
+            let product;
+            
+            // Find product in either category
+            for (const category in products) {
+                product = products[category].find(p => p.id === productId);
+                if (product) break;
+            }
+            
+            if (!product) return;
+            
+            // Set product details
+            document.getElementById('detail-product-image').src = product.image;
+            document.getElementById('detail-product-title').textContent = product.title;
+            document.getElementById('detail-product-description').textContent = product.description;
+            
+            // Set price
+            let priceHTML = '';
+            if (currentCurrency === 'usd') {
+                priceHTML = `$${product.price.toFixed(2)}`;
+                if (product.originalPrice && product.originalPrice > product.price) {
+                    priceHTML += ` <span style="color: #999; text-decoration: line-through; font-size: 1rem;">$${product.originalPrice.toFixed(2)}</span>`;
+                }
+            } else {
+                const pricePKR = product.price * exchangeRate;
+                const originalPKR = product.originalPrice * exchangeRate;
+                priceHTML = `PKR ${pricePKR.toFixed(0)}`;
+                if (product.originalPrice && product.originalPrice > product.price) {
+                    priceHTML += ` <span style="color: #999; text-decoration: line-through; font-size: 1rem;">PKR ${originalPKR.toFixed(0)}</span>`;
+                }
+            }
+            document.getElementById('detail-product-price').innerHTML = priceHTML;
+            
+            // Load reviews
+            const reviewsContainer = document.getElementById('product-reviews');
+            reviewsContainer.innerHTML = '';
+            
+            if (product.reviews && product.reviews.length > 0) {
+                product.reviews.forEach(review => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.className = 'review';
+                    
+                    let stars = '';
+                    for (let i = 0; i < 5; i++) {
+                        stars += i < review.rating ? '★' : '☆';
+                    }
+                    
+                    reviewElement.innerHTML = `
+                        <div class="review-author">${review.author} <span style="color: #ffc107;">${stars}</span></div>
+                        <div class="review-text">${review.text}</div>
+                    `;
+                    
+                    reviewsContainer.appendChild(reviewElement);
+                });
+            } else {
+                reviewsContainer.innerHTML = '<p>No reviews yet.</p>';
+            }
+            
+            // Show product detail page
+            hideAllPages();
+            productDetailPage.style.display = 'block';
+        }
+
+        // Add to cart function
+        function addToCart(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            let product;
+            
+            // Find product in either category
+            for (const category in products) {
+                product = products[category].find(p => p.id === productId);
+                if (product) break;
+            }
+            
+            if (!product) return;
+            
+            // Check if product already in cart
+            const existingItem = cart.find(item => item.id === product.id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    ...product,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            
+            // Show cart sidebar if adding from grid
+            if (!productDetailPage.style.display || productDetailPage.style.display === 'none') {
+                cartSidebar.classList.add('open');
+            }
+        }
+
+        // Update cart UI
+        function updateCart() {
+            cartItemsContainer.innerHTML = '';
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'cart-item';
+                
+                const price = currentCurrency === 'usd' ? item.price : item.price * exchangeRate;
+                const priceFormatted = currentCurrency === 'usd' ? `$${price.toFixed(2)}` : `PKR ${price.toFixed(0)}`;
+                
+                itemElement.innerHTML = `
+                    <div class="cart-item-image">
+                        <img src="${item.image}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/100?text=Product'">
+                    </div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${item.title}</div>
+                        <div class="cart-item-price">${priceFormatted} x ${item.quantity}</div>
+                        <div class="cart-item-remove" data-id="${item.id}">Remove</div>
+                    </div>
+                `;
+                
+                cartItemsContainer.appendChild(itemElement);
+                total += price * item.quantity;
+            });
+            
+            // Update total
+            const totalFormatted = currentCurrency === 'usd' ? `$${total.toFixed(2)}` : `PKR ${total.toFixed(0)}`;
+            cartTotalElement.textContent = totalFormatted;
+            
+            // Update cart count
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCountElement.textContent = totalItems;
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.cart-item-remove').forEach(button => {
+                button.addEventListener('click', removeFromCart);
+            });
+        }
+
+        // Remove from cart
+        function removeFromCart(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            
+            if (itemIndex !== -1) {
+                if (cart[itemIndex].quantity > 1) {
+                    cart[itemIndex].quantity -= 1;
+                } else {
+                    cart.splice(itemIndex, 1);
+                }
+                
+                updateCart();
+            }
+        }
+        
+        // Setup Tic Tac Toe game
+        function setupTicTacToe() {
+            // Create cells
+            ticTacToeBoardElement.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'tic-tac-toe-cell';
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', handleTicTacToeClick);
+                ticTacToeBoardElement.appendChild(cell);
+            }
+        }
+        
+        // Handle Tic Tac Toe cell click
+        function handleTicTacToeClick(e) {
+            const index = parseInt(e.target.getAttribute('data-index'));
+            
+            // If cell is already filled or game is not active, return
+            if (ticTacToeBoard[index] !== '' || !gameActive) return;
+            
+            // Update board and UI
+            ticTacToeBoard[index] = currentPlayer;
+            e.target.textContent = currentPlayer;
+            
+            // Check for win or draw
+            if (checkTicTacToeWin()) {
+                ticTacToeStatus.textContent = `Player ${currentPlayer} wins!`;
+                gameActive = false;
+                showCelebration();
+                return;
+            } else if (checkTicTacToeDraw()) {
+                ticTacToeStatus.textContent = "Game ended in a draw!";
+                gameActive = false;
+                return;
+            }
+            
+            // Switch player
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            ticTacToeStatus.textContent = `Player ${currentPlayer}'s turn`;
+        }
+        
+        // Check for Tic Tac Toe win
+        function checkTicTacToeWin() {
+            const winConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6]             // diagonals
+            ];
+            
+            return winConditions.some(condition => {
+                return condition.every(index => {
+                    return ticTacToeBoard[index] === currentPlayer;
+                });
+            });
+        }
+        
+        // Check for Tic Tac Toe draw
+        function checkTicTacToeDraw() {
+            return ticTacToeBoard.every(cell => cell !== '');
+        }
+        
+        // Reset Tic Tac Toe game
+        function resetTicTacToe() {
+            ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            ticTacToeStatus.textContent = `Player X's turn`;
+            
+            // Clear cells
+            document.querySelectorAll('.tic-tac-toe-cell').forEach(cell => {
+                cell.textContent = '';
+            });
+        }
+        
+        // Setup Memory Game
+        function setupMemoryGame() {
+            // Create pairs of cards
+            const emojis = ['🎮', '👾', '🕹️', '🎯', '🎲', '🧩', '🏆', '🎧'];
+            memoryCards = [...emojis, ...emojis];
+            
+            // Shuffle cards
+            memoryCards = memoryCards.sort(() => Math.random() - 0.5);
+            
+            // Create card elements
+            memoryGameBoard.innerHTML = '';
+            memoryCards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.setAttribute('data-index', index);
+                card.textContent = emoji;
+                card.addEventListener('click', flipCard);
+                memoryGameBoard.appendChild(card);
+            });
+            
+            // Reset game state
+            moveCount = 0;
+            matchedPairs = 0;
+            memoryGameStatus.textContent = `Moves: ${moveCount}`;
+        }
+        
+        // Flip memory card
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+            
+            this.classList.add('flipped');
+            
+            if (!hasFlippedCard) {
+                // First click
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+            
+            // Second click
+            secondCard = this;
+            moveCount++;
+            memoryGameStatus.textContent = `Moves: ${moveCount}`;
+            checkForMatch();
+        }
+        
+        // Check for memory card match
+        function checkForMatch() {
+            const isMatch = firstCard.textContent === secondCard.textContent;
+            
+            if (isMatch) {
+                disableCards();
+                matchedPairs++;
+                
+                // Check if all pairs matched
+                if (matchedPairs === memoryCards.length / 2) {
+                    showCelebration();
+                }
+            } else {
+                unflipCards();
+            }
+        }
+        
+        // Disable matched cards
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            
+            resetBoard();
+        }
+        
+        // Unflip unmatched cards
+        function unflipCards() {
+            lockBoard = true;
+            
+            setTimeout(() => {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+                
+                resetBoard();
+            }, 1000);
+        }
+        
+        // Reset memory game board state
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+        
+        // Show celebration modal
+        function showCelebration() {
+            // Create confetti
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.animationDelay = `${Math.random() * 3}s`;
+                celebration.appendChild(confetti);
+            }
+            
+            celebration.style.display = 'flex';
+        }
+        
+        // Close celebration modal
+        function closeCelebrationModal() {
+            celebration.style.display = 'none';
+            
+            // Remove confetti
+            document.querySelectorAll('.confetti').forEach(confetti => {
+                confetti.remove();
+            });
+            
+            // Reset games
+            resetTicTacToe();
+            setupMemoryGame();
+        }
+        
+        // Hide all pages
+        function hideAllPages() {
+            mainContent.style.display = 'none';
+            productDetailPage.style.display = 'none';
+            gamesPage.style.display = 'none';
+            ticTacToeScreen.style.display = 'none';
+            memoryGameScreen.style.display = 'none';
+            searchPage.style.display = 'none';
+            accountPage.style.display = 'none';
+        }
+        
+        // Show home page
+        function showHomePage() {
+            hideAllPages();
+            mainContent.style.display = 'block';
+        }
+        
+        // Show games page
+        function showGamesPage() {
+            hideAllPages();
+            gamesPage.style.display = 'block';
+        }
+        
+        // Show tic tac toe game
+        function showTicTacToeGame() {
+            hideAllPages();
+            resetTicTacToe();
+            ticTacToeScreen.style.display = 'block';
+        }
+        
+        // Show memory game
+        function showMemoryGame() {
+            hideAllPages();
+            setupMemoryGame();
+            memoryGameScreen.style.display = 'block';
+        }
+        
+        // Show search page
+        function showSearchPage() {
+            hideAllPages();
+            searchPage.style.display = 'block';
+            searchPageInput.focus();
+        }
+        
+        // Show account page
+        function showAccountPage() {
+            hideAllPages();
+            accountPage.style.display = 'block';
+        }
+        
+        // Perform search
+        function performSearch(query) {
+            searchResults.innerHTML = '<h3>Search Results</h3>';
+            
+            if (!query || query.trim() === '') {
+                searchResults.innerHTML += '<p>Please enter a search term</p>';
+                return;
+            }
+            
+            const lowerQuery = query.toLowerCase();
+            let foundResults = false;
+            
+            // Search in both categories
+            for (const category in products) {
+                products[category].forEach(product => {
+                    if (product.title.toLowerCase().includes(lowerQuery)) {
+                        foundResults = true;
+                        const resultElement = document.createElement('div');
+                        resultElement.className = 'product-card';
+                        resultElement.style.margin = '10px 0';
+                        
+                        resultElement.innerHTML = `
+                            <div style="display: flex; align-items: center; padding: 10px;">
+                                <img src="${product.image}" alt="${product.title}" style="width: 60px; height: 60px; object-fit: contain; margin-right: 10px;" onerror="this.src='https://via.placeholder.com/100?text=Product'">
+                                <div>
+                                    <div style="font-weight: bold;">${product.title}</div>
+                                    <div style="color: var(--primary); font-weight: bold;">$${product.price.toFixed(2)}</div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        resultElement.addEventListener('click', () => {
+                            showProductDetail(product.id);
+                        });
+                        
+                        searchResults.appendChild(resultElement);
+                    }
+                });
+            }
+            
+            if (!foundResults) {
+                searchResults.innerHTML += '<p>No results found</p>';
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Back button
+            backButton.addEventListener('click', showHomePage);
+            
+            // Games back button
+            gamesBackButton.addEventListener('click', showHomePage);
+            
+            // Tic Tac Toe back button
+            ticTacToeBackButton.addEventListener('click', showGamesPage);
+            
+            // Memory game back button
+            memoryGameBackButton.addEventListener('click', showGamesPage);
+            
+            // Search back button
+            searchBackButton.addEventListener('click', showHomePage);
+            
+            // Account back button
+            accountBackButton.addEventListener('click', showHomePage);
+            
+            // Category tabs
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    categoryTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentCategory = tab.getAttribute('data-category');
+                    renderProducts();
+                });
+            });
+            
+            // Currency toggle
+            currencyOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    currencyOptions.forEach(o => o.classList.remove('active'));
+                    option.classList.add('active');
+                    currentCurrency = option.getAttribute('data-currency');
+                    renderProducts();
+                    updateCart();
+                    
+                    // Update product detail page if open
+                    if (currentProductId) {
+                        showProductDetail(currentProductId);
+                    }
+                });
+            });
+            
+            // Cart button
+            cartBtn.addEventListener('click', () => {
+                cartSidebar.classList.add('open');
+            });
+            
+            // Close cart
+            closeCartBtn.addEventListener('click', () => {
+                cartSidebar.classList.remove('open');
+            });
+            
+            // User button
+            userBtn.addEventListener('click', () => {
+                signupModal.style.display = 'flex';
+            });
+            
+            // Close modal
+            closeModalBtn.addEventListener('click', () => {
+                signupModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            signupModal.addEventListener('click', (e) => {
+                if (e.target === signupModal) {
+                    signupModal.style.display = 'none';
+                }
+            });
+            
+            // Form submission
+            document.getElementById('signup-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Account created successfully!');
+                signupModal.style.display = 'none';
+            });
+            
+            // Product detail page buttons
+            detailAddToCartBtn.addEventListener('click', () => {
+                if (currentProductId) {
+                    const fakeEvent = { target: { getAttribute: () => currentProductId } };
+                    addToCart(fakeEvent);
+                    cartSidebar.classList.add('open');
+                }
+            });
+            
+            detailBuyNowBtn.addEventListener('click', () => {
+                if (currentProductId) {
+                    const fakeEvent = { target: { getAttribute: () => currentProductId } };
+                    addToCart(fakeEvent);
+                    alert('Proceeding to checkout!');
+                    cartSidebar.classList.add('open');
+                }
+            });
+            
+            // Navigation buttons
+            homeNav.addEventListener('click', showHomePage);
+            gamesNav.addEventListener('click', showGamesPage);
+            searchNav.addEventListener('click', showSearchPage);
+            accountNav.addEventListener('click', showAccountPage);
+            
+            // Game buttons
+            ticTacToeGameBtn.addEventListener('click', showTicTacToeGame);
+            memoryGameBtn.addEventListener('click', showMemoryGame);
+            
+            // Search functionality
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    showSearchPage();
+                    performSearch(searchInput.value);
+                }
+            });
+            
+            searchPageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch(searchPageInput.value);
+                }
+            });
+            
+            searchPageBtn.addEventListener('click', () => {
+                performSearch(searchPageInput.value);
+            });
+            
+            // Account buttons
+            loginBtn.addEventListener('click', () => {
+                alert('Login functionality would be implemented here');
+            });
+            
+            signupBtn.addEventListener('click', () => {
+                signupModal.style.display = 'flex';
+            });
+            
+            // Celebration close button
+            closeCelebration.addEventListener('click', closeCelebrationModal);
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
